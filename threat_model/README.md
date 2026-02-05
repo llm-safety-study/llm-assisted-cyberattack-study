@@ -1,36 +1,46 @@
 # Threat Model
 
-This directory contains the threat model used to frame the evaluation of LLM-assisted cyberattack construction in the accompanying paper.
+This repository adopts the same threat model described in Section 3 of the paper. The goal is to enable reproducibility of experimental assumptions while maintaining appropriate ethical boundaries for security research.
 
-## Overview
+## Human Adversary Model
 
-The threat model adopts a human-in-the-loop adversarial setting in which a human attacker leverages a large language model (LLM) as an advisory system. The LLM provides textual guidance and procedural suggestions but does not execute code, interact directly with systems, or autonomously adapt to the environment.
+We assume a human adversary with basic to intermediate technical skill, representative of a novice penetration tester, student attacker, or motivated individual. The adversary possesses general familiarity with operating systems, networking concepts, and common offensive security tools, but lacks advanced expertise in exploit development, malware engineering, or reverse engineering.
 
-All experiments are conducted in a controlled, isolated laboratory environment for research purposes only.
+The adversary’s objective is not to invent novel attack techniques, but to reduce cognitive and technical effort by leveraging a large language model (LLM) for syntax recall, tool suggestions, code fragments, and troubleshooting guidance. All attack actions, including environment configuration, payload execution, error correction, and interpretation of results, are performed manually by the human operator.
 
-## Diagram Description
+## LLM Role and Capabilities
 
-The threat model diagram illustrates the following components and interactions:
+The LLM is treated strictly as an advisory-only system. It provides natural language explanations, procedural guidance, and code templates, but has no direct access to target systems, no ability to execute code, and no persistent memory across interactions.
 
-- **Human Adversary (In-the-Loop):**  
-  A human operator initiates all actions, queries the LLM for assistance, and manually writes and executes any attack-related code or commands.
+The model cannot observe live system state and relies entirely on user-provided context such as screenshots, error messages, or textual descriptions. Prompt manipulation strategies such as character play, re-contextualization, and iterative refinement are permitted to approximate an upper bound on model assistance. Despite these favorable assumptions, the LLM remains constrained by its lack of system-level awareness, temporal continuity, and persistent state management.
 
-- **LLM (Advisory Role):**  
-  The LLM provides text-based guidance in response to user prompts. Its outputs are constrained by built-in safeguards and a fixed knowledge cutoff. The LLM has no direct access to the experimental environment.
+## Attack Surface and Experimental Environment
 
-- **Experimental Environment:**  
-  All attack attempts occur within a controlled and isolated virtual lab environment. No real-world systems or external targets are involved.
+All experiments are conducted in fully sandboxed virtual environments configured solely for research purposes. Targets include intentionally vulnerable systems such as Damn Vulnerable Web Application (DVWA) and isolated Windows virtual machines.
 
-- **Defender Assumptions:**  
-  Defenders are assumed to employ standard security practices and basic security tools. The use of LLMs by defenders is explicitly excluded to isolate attacker-side assistance.
+Systems are connected using host-only networking, preventing interaction with external infrastructure or live systems. Defensive mechanisms are weakened only when explicitly documented, such as lowering DVWA security levels to expose SQL injection vulnerabilities. These changes are treated as experimental controls rather than realistic defaults.
 
-- **Out-of-Scope Considerations:**  
-  The model explicitly excludes fully autonomous AI attackers, real-world uncontrolled attack scenarios, active LLM-based defensive countermeasures, and long-term security implications.
+## Defender Assumptions
 
-## Scope and Intent
+Defenders are assumed to employ baseline protections appropriate to each environment, including default firewall rules, endpoint protection mechanisms, and application-level defenses when enabled.
 
-This threat model is intentionally conservative. It is designed to evaluate the practical capabilities and limitations of LLMs as assistive tools under realistic constraints, rather than to model autonomous or self-directed AI-driven attacks.
+Advanced AI-aware defenses, such as prompt monitoring, AI-assisted intrusion detection, or LLM-aware filtering, are intentionally excluded. This isolates the contribution of attacker-side LLM assistance without conflating results with emerging defensive technologies.
+
+## Out-of-Scope Claims
+
+This work explicitly excludes:
+- Fully autonomous AI-driven attackers
+- Real-world, uncontrolled attack deployment
+- Claims that LLM-assisted attacks outperform skilled human adversaries
+- Long-term security implications or prevalence in the wild
+
+The study does not aim to optimize attacks or measure real-world success rates. Instead, it systematically characterizes where LLM-assisted attack construction breaks down, even under permissive and controlled conditions.
+
+## Multiple-Model Assumption
+
+Multiple state-of-the-art LLMs are evaluated under identical experimental conditions. Each model is treated as an advisory-only system and subjected to the same prompt strategies, attack objectives, and sandboxed environments. This enables comparative analysis of whether observed capability boundaries are model-specific or structural across contemporary LLM architectures.
 
 ## Threat Model Diagram
 
 ![Human-in-the-loop threat model for LLM-assisted cyberattack construction](threat_model.png)
+
